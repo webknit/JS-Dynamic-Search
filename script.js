@@ -1,44 +1,143 @@
-/* - BASE HTML TEMPLATE
-------------------------------------------------- 
-	Description: JS Scripts
-	Author:Shane Prendergast
-	Author URL:http://www.webknit.co.uk
-	Template URL:http://base.webknit.co.uk/
-*/
+var Connect = Connect || {};
 
-// JS EXAMPLE
+Connect.Phonebook = function() {	
 
-var Base = Base || {};
 
-Base.functionName = function()
-{	
-	var self = $(this);
-	var variable = $('.var');
+	var phonebookSearchInput = $('#search-input');
+	var currentLetter = '';
+	var fName = '';
+	var namesBox = $("#phonebook-names dl");
 
-	function init()
-	{
-		variable.click(functionOne);
-		functionTwo();
+	function init() {
+
+		loadStaffFromJSON();
+		phonebookSearchInput.keyup(searchFunction)
+
 	}
 
-	function functionOne()
-	{
-		// JS CODE
-	}
+	function searchFunction() {
 
-	function functionTwo()
-	{
-		// JS CODE
-		window.hide();
+     // searchTerm variable is stored as the value of #search
+        var searchTerm = $(this).val().toLowerCase();
+
+        // Empty the #result ul as the search elements will differ
+        $results = phonebookSearchInput.empty();
+
+        // Log the search term in the console
+        console.log("searchterm is " + searchTerm)
+
+        if (searchTerm>'') {
+
+        	namesBox.empty();
+
+        	$.ajax ({
+
+				url:"test.json",
+				dataType:"json",
+
+					success:function(data) {
+
+						var i;
+
+						for(i = 0; i < data.length; i++) {
+
+							fName = data[i].name.toLowerCase();
+							console.log("fName is " + fName)
+							fNameFLetter = fName.charAt(0);
+
+							avatar = data[i].picture;
+
+							if(! avatar){
+							   
+								avatar = "avatar.jpg";
+
+							};
+
+							if (fName.indexOf(searchTerm) > -1 && fNameFLetter != currentLetter) {
+
+								namesBox.append('<dt>' + fNameFLetter + '</dt><dd><img src="' + avatar + '"/>' + data[i].name + '</dd>');
+
+								currentLetter = fNameFLetter;
+
+							}
+
+							else if (fName.indexOf(searchTerm) > -1) {
+
+								namesBox.append('<dd><img src="' + avatar + '"/>' + data[i].name + '</dd>');
+
+							}
+
+						}
+					}
+
+			});
+
+        }
+
+        else {
+
+        	loadStaffFromJSON();
+
+        }
+
+    };
+
+	function loadStaffFromJSON() {
+
+		namesBox.empty();
+
+		$.ajax ({
+
+			url:"test.json",
+			dataType:"json",
+
+				success:function(data) {
+
+					var i;
+
+					for(i = 0; i < data.length; i++) {
+
+						//$("#phonebook-names dl").append('<dd><img src="' + data[i].picture + '"/>' + data[i].name + '</dd>');
+
+						fName = data[i].name;
+						fNameFLetter = fName.charAt(0);
+
+						avatar = data[i].picture;
+
+						if(! avatar){
+						   
+							avatar = "avatar.jpg";
+
+						};
+
+						if (fNameFLetter != currentLetter) {
+
+							namesBox.append('<dt>' + fNameFLetter + '</dt><dd><img src="' + avatar + '"/>' + data[i].name + '</dd>');
+
+							currentLetter = fNameFLetter;
+
+						}
+
+						else {
+
+							namesBox.append('<dd><img src="' + avatar + '"/>' + data[i].name + '</dd>');
+
+						}
+
+					}
+				}
+
+		});
+
 	}
 
 	init();
+
 };
 
 // ON DOC READY
-$(function()
-{	
-	new Base.functionName();
+$(function() {	
+
+	new Connect.Phonebook();
 	
 });
-
