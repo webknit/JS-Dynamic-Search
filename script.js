@@ -1,13 +1,14 @@
-var Connect = Connect || {};
+var Webknit = Webknit || {};
 
-Connect.Phonebook = function() {	
+Webknit.NamesList = function() {	
 
-
+	// Variables
 	var phonebookSearchInput = $('#search-input');
 	var currentLetter = '';
 	var fName = '';
 	var namesBox = $("#phonebook-names dl");
 
+	// Call initial fuunctions
 	function init() {
 
 		loadStaffFromJSON();
@@ -15,21 +16,22 @@ Connect.Phonebook = function() {
 
 	}
 
+	// Search function
 	function searchFunction() {
 
-     // searchTerm variable is stored as the value of #search
+     	// searchTerm variable is stored as the value of #search
         var searchTerm = $(this).val().toLowerCase();
-
-        // Empty the #result ul as the search elements will differ
-        $results = phonebookSearchInput.empty();
 
         // Log the search term in the console
         console.log("searchterm is " + searchTerm)
 
+        // If Search term exists
         if (searchTerm>'') {
 
+        	// Empty name box
         	namesBox.empty();
 
+        	// AJAX call
         	$.ajax ({
 
 				url:"test.json",
@@ -37,22 +39,26 @@ Connect.Phonebook = function() {
 
 					success:function(data) {
 
-						var i;
-
+						// For loop to run through the JSON
 						for(i = 0; i < data.length; i++) {
 
+							// Change the name to lowercase
 							fName = data[i].name.toLowerCase();
-							console.log("fName is " + fName)
+
+							// Get the first letter of the name
 							fNameFLetter = fName.charAt(0);
 
+							// Get picture from json
 							avatar = data[i].picture;
 
+							// If it doesn't exist then use a default one
 							if(! avatar){
 							   
 								avatar = "avatar.jpg";
 
 							};
 
+							// If the first letter of the name doesn't equal the current letter then output the letter and change it
 							if (fName.indexOf(searchTerm) > -1 && fNameFLetter != currentLetter) {
 
 								namesBox.append('<dt>' + fNameFLetter + '</dt><dd><img src="' + avatar + '"/>' + data[i].name + '</dd>');
@@ -61,6 +67,7 @@ Connect.Phonebook = function() {
 
 							}
 
+							// Else output the name only
 							else if (fName.indexOf(searchTerm) > -1) {
 
 								namesBox.append('<dd><img src="' + avatar + '"/>' + data[i].name + '</dd>');
@@ -76,6 +83,7 @@ Connect.Phonebook = function() {
 
         else {
 
+        	// If search result == nothing then reload the names
         	loadStaffFromJSON();
 
         }
@@ -84,8 +92,10 @@ Connect.Phonebook = function() {
 
 	function loadStaffFromJSON() {
 
+		// Empty the box
 		namesBox.empty();
 
+		// AJAX call
 		$.ajax ({
 
 			url:"test.json",
@@ -93,23 +103,23 @@ Connect.Phonebook = function() {
 
 				success:function(data) {
 
-					var i;
-
 					for(i = 0; i < data.length; i++) {
 
-						//$("#phonebook-names dl").append('<dd><img src="' + data[i].picture + '"/>' + data[i].name + '</dd>');
-
+						// Check the name and its first character
 						fName = data[i].name;
 						fNameFLetter = fName.charAt(0);
 
-						avatar = data[i].picture;
+						// Get picture from json
+							avatar = data[i].picture;
 
+						// If it doesn't exist then use a default one
 						if(! avatar){
 						   
 							avatar = "avatar.jpg";
 
 						};
 
+						// If the first letter of the name doesn't equal the current letter then output the letter and change it
 						if (fNameFLetter != currentLetter) {
 
 							namesBox.append('<dt>' + fNameFLetter + '</dt><dd><img src="' + avatar + '"/>' + data[i].name + '</dd>');
@@ -118,6 +128,7 @@ Connect.Phonebook = function() {
 
 						}
 
+						// Else output the name only
 						else {
 
 							namesBox.append('<dd><img src="' + avatar + '"/>' + data[i].name + '</dd>');
@@ -138,6 +149,6 @@ Connect.Phonebook = function() {
 // ON DOC READY
 $(function() {	
 
-	new Connect.Phonebook();
+	new Webknit.NamesList();
 	
 });
